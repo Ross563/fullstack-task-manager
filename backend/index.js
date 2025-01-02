@@ -19,7 +19,7 @@ const { Readable } = require("stream");
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:3000",
+    origin: process.env.frontend_base_url,
   })
 );
 app.use(bodyParser.json());
