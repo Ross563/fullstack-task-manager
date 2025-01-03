@@ -92,7 +92,9 @@ app.get("/", (req, res) => {
 
 app.get("/logout", (req, res) => {
   try {
-    res.cookie("token", "").json({ log: "true" });
+    res
+      .cookie("token", "", { sameSite: "None", secure: true })
+      .json({ log: "true" });
   } catch (error) {
     console.error("Error logging out:", error);
     res.status(500).json({ error: "Logout failed" });
@@ -124,7 +126,7 @@ app.get("/tasks", IsLoggedIn, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json(user);
+    res.status(200).json(user);
   } catch (error) {
     console.error("Error fetching tasks:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -221,7 +223,9 @@ app.post("/login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token).json(userDoc);
+    res
+      .cookie("token", token, { sameSite: "None", secure: true })
+      .json(userDoc);
   } catch (error) {
     console.error("Login error:", error);
     res.status(501).json({ error: "Something went wrong. Please try again." });
@@ -249,187 +253,15 @@ app.post("/register", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token).json(userDoc);
+    res
+      .cookie("token", token, { sameSite: "None", secure: true })
+      .json(userDoc);
   } catch (e) {
     console.error("User registration error:", e);
     res.status(422).json({ error: "Registration failed. Please try again." });
   }
 });
 
-app.get("/logout", (req, res) => {
-  res.cookie("token", "");
-});
-
 app.listen(PORT, () => {
   console.log(`Server is running on PORT=${PORT}`);
 });
-
-// const express = require("express");
-// const app = express();
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
-// const cookieParser = require("cookie-parser");
-// require("dotenv").config();
-// require("./models/db");
-// const UserModel = require("./models/userModel");
-// const TaskModel = require("./models/taskModel");
-// const cors = require("cors");
-// const bodyParser = require("body-parser");
-
-// const PORT = process.env.PORT || 8080;
-// const jwtSecret = process.env.JwtSecret;
-
-// app.use(
-//   cors({
-//     credentials: true,
-//     origin: "http://localhost:3000", // Adjust for your frontend URL
-//   })
-// );
-// app.use(bodyParser.json());
-// app.use(cookieParser());
-
-// // Middleware for Authentication
-// function IsLoggedIn(req, res, next) {
-//   const token = req.cookies.token;
-
-//   if (!token) {
-//     return res.status(401).json({ error: "You are not logged in" });
-//   }
-
-//   try {
-//     const data = jwt.verify(token, jwtSecret);
-//     req.userDataFromCookie = data;
-//     next();
-//   } catch (error) {
-//     console.error("Invalid token:", error);
-//     res.status(403).json({ error: "Invalid or expired token" });
-//   }
-// }
-
-// // Root Route
-// app.get("/", (req, res) => {
-//   res.send("Hello from the server");
-// });
-
-// // Test Route
-// app.get("/testing", (req, res) => {
-//   const token = req.cookies.token;
-
-//   try {
-//     if (!token) {
-//       return res.json(false);
-//     }
-
-//     jwt.verify(token, jwtSecret);
-//     res.json(true);
-//   } catch (error) {
-//     res.json(false);
-//   }
-// });
-
-// // Fetch Tasks
-// app.get("/tasks", IsLoggedIn, async (req, res) => {
-//   try {
-//     const userID = req.userDataFromCookie.id;
-//     const user = await UserModel.findById(userID).populate("tasks");
-
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-//     res.json({ tasks: user.tasks });
-//   } catch (error) {
-//     console.error("Error fetching tasks:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-// // Create a Task
-// app.post("/tasks", IsLoggedIn, async (req, res) => {
-//   const { taskName, isDone } = req.body;
-
-//   if (!taskName) {
-//     return res.status(400).json({ error: "Task name is required" });
-//   }
-
-//   try {
-//     const userID = req.userDataFromCookie.id;
-
-//     const newTask = await TaskModel.create({
-//       taskName,
-//       isDone: isDone || false,
-//       user: userID,
-//     });
-
-//     const user = await UserModel.findById(userID);
-//     user.tasks.push(newTask._id);
-//     await user.save();
-
-//     res.status(201).json(newTask);
-//   } catch (error) {
-//     console.error("Error creating task:", error);
-//     res.status(500).json({ error: "Failed to create task" });
-//   }
-// });
-
-// // Login Route
-// app.post("/login", async (req, res) => {
-//   const { email, password } = req.body;
-
-//   if (!email || !password) {
-//     return res.status(400).json({ error: "Email and password are required" });
-//   }
-
-//   try {
-//     const user = await UserModel.findOne({ email });
-
-//     if (!user || !bcrypt.compareSync(password, user.password)) {
-//       return res.status(401).json({ error: "Invalid email or password" });
-//     }
-
-//     const token = jwt.sign({ email: user.email, id: user._id }, jwtSecret, {
-//       expiresIn: "7d",
-//     });
-
-//     res.cookie("token", token, { httpOnly: true }).json(user);
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     res.status(500).json({ error: "Login failed" });
-//   }
-// });
-
-// // Register Route
-// app.post("/register", async (req, res) => {
-//   const { name, email, password } = req.body;
-
-//   if (!name || !email || !password) {
-//     return res.status(400).json({ error: "All fields are required" });
-//   }
-
-//   try {
-//     const salt = await bcrypt.genSalt(10);
-//     const hashedPassword = await bcrypt.hash(password, salt);
-
-//     const newUser = await UserModel.create({
-//       name,
-//       email,
-//       password: hashedPassword,
-//     });
-
-//     res.status(201).json(newUser);
-//   } catch (error) {
-//     console.error("Registration error:", error);
-//     res.status(500).json({ error: "Registration failed" });
-//   }
-// });
-
-// // Logout Route
-// app.get("/logout", (req, res) => {
-//   res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
-//   res.json({ message: "Logged out successfully" });
-// });
-
-// // Start the Server
-// app.listen(PORT, () => {
-//   console.log(`Server is running on PORT=${PORT}`);
-// });
