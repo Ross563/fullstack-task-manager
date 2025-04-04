@@ -1,6 +1,7 @@
 import { Link, Navigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import axios from "axios";
+import { BiCopy } from "react-icons/bi";
 import { AuthContext } from "../context/AuthContext";
 
 export default function LoginPage() {
@@ -64,12 +65,10 @@ export default function LoginPage() {
           </div>
         </form>
         <div className="mt-8 flex items-center gap-2">
-          <h3>
-            TEST "email" and "password" : 8888@8888.8888 (ie. email = password)
-          </h3>
-          <button onClick={handleCopy} className="p-2 border rounded">
+          <h3>(TEST email == password) = 8888@8888.8888</h3>
+          <BiCopy onClick={handleCopy} className="p-2 border rounded">
             📋 Copy
-          </button>
+          </BiCopy>
         </div>
         {copied && <p className="text-blue-500">Copied to clipboard!</p>}
       </div>
