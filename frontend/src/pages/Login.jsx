@@ -8,7 +8,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
   const { setIsAuthenticated } = useContext(AuthContext);
+  const [copied, setCopied] = useState(false);
 
+  function handleCopy() {
+    const email = "8888@8888.8888";
+    navigator.clipboard
+      .writeText(email)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => alert("Failed to copy"));
+  }
   async function handleLoginSubmit(ev) {
     ev.preventDefault();
     try {
@@ -56,6 +67,15 @@ export default function LoginPage() {
           <h3>TESTING email : 8888@8888.8888</h3>
           <h3>TESTING password : 88888888 (ie. 8 times 8)</h3>
         </div>
+        <div className="mt-8 flex items-center gap-2">
+          <h3>
+            TEST "email" and "password" : 8888@8888.8888 (ie. email = password)
+          </h3>
+          <button onClick={handleCopy} className="p-2 border rounded">
+            📋 Copy
+          </button>
+        </div>
+        {copied && <p className="text-blue-500">Copied to clipboard!</p>}
       </div>
     </div>
   );
