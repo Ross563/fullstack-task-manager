@@ -1,4 +1,4 @@
-name: Backend CI
+name: Backend CI/CD
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build-and-test:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +27,11 @@ jobs:
       run: npm test
       working-directory: ./backend
 
-    - name: Run build (optional)
-      run: npm run build
-      working-directory: ./backend
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger Render Deploy
+      run: curl "$RENDER_DEPLOY_HOOK"
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
