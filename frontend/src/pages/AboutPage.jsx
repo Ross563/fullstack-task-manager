@@ -67,8 +67,8 @@ function AboutPage() {
           simplifying lives. Built using modern technologies like
           <span className="font-medium text-gray-800"> React</span>,
           <span className="font-medium text-gray-800"> Node.js</span>, and
-          <span className="font-medium text-gray-800"> MongoDB</span>, this app
-          ensures a seamless and efficient experience.
+          <span className="font-medium text-gray-800"> MongoDB</span>, this task
+          manager app ensures a seamless and efficient experience.
         </p>
       </section>
     </div>
