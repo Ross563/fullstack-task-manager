@@ -63,10 +63,6 @@ export default function LoginPage() {
             </Link>
           </div>
         </form>
-        <div className="mt-8">
-          <h3>TESTING email : 8888@8888.8888</h3>
-          <h3>TESTING password : 88888888 (ie. 8 times 8)</h3>
-        </div>
         <div className="mt-8 flex items-center gap-2">
           <h3>
             TEST "email" and "password" : 8888@8888.8888 (ie. email = password)
