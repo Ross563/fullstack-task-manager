@@ -66,7 +66,10 @@ export default function LoginPage() {
         </form>
         <div className="mt-8 flex items-center gap-2">
           <h3>(TEST email == password) = 8888@8888.8888</h3>
-          <BiCopy onClick={handleCopy} className="p-2 border bg-black rounded">
+          <BiCopy
+            onClick={handleCopy}
+            className="text-xl cursor-pointer text-gray-600 hover:text-blue-500"
+          >
             📋 Copy
           </BiCopy>
         </div>
