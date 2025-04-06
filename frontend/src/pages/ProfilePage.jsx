@@ -6,7 +6,7 @@ function ProfilePage() {
   const [profilePic, setProfilePic] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const { currUser, setCurrUser } = useContext(AuthContext);
+  const { currUser, setCurrUser, isAuthenticated } = useContext(AuthContext);
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -28,18 +28,20 @@ function ProfilePage() {
   };
 
   useEffect(() => {
-    async function initialLoad() {
-      try {
-        const formData = new FormData();
-        const { data: updatedUser } = await axios.post("/profile", formData);
-        setCurrUser(updatedUser);
-        // Update the profilePic state with the new URL
-      } catch (error) {
-        console.log(error);
-        alert("Image loading failed. Please try again.");
+    if (isAuthenticated) {
+      async function initialLoad() {
+        try {
+          const formData = new FormData();
+          const { data: updatedUser } = await axios.post("/profile", formData);
+          setCurrUser(updatedUser);
+          // Update the profilePic state with the new URL
+        } catch (error) {
+          console.log(error);
+          alert("Image loading failed. Please try again.");
+        }
       }
+      initialLoad();
     }
-    initialLoad();
   }, []);
 
   useEffect(() => {
